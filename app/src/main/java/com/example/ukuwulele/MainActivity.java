@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,21 +24,18 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE = 123;
     private static final int PERMISSION_REQUEST_CODE = 321;
-    private RadioGroup rgGroup;
     String[] filenames;
     String choseFile;//imsorry
-
+    Boolean loadFiles =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        rgGroup = findViewById(R.id.rgGroup);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -47,10 +43,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
-        Button btnPlay = findViewById(R.id.BtnPlay);
-        btnPlay.setOnClickListener(this);
+        if(!loadFiles){
+            dirList();
+            for(String filename: filenames) {
+                System.out.println(filename);
+                addButton(filename);
 
-        // Request necessary permissions
+            }
+            loadFiles=true;
+        }
         requestNecessaryPermissions();
     }
 
@@ -85,23 +86,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(this, play.class);
-        intent.putExtra("SONG_NAME",choseFile);
-        startActivity(intent);
-    }
-
-    public void display_folder_insides(View view) {
-        dirList();
-        System.out.println(Arrays.toString(filenames));
-        for(String filename: filenames) {
-            System.out.println(filename);
-            addButton(filename);
-
-        }
-    }
-
     public void addButton(String name){
         LinearLayout layout = (LinearLayout) findViewById(R.id.main);
         Button newbtn= new Button(this);
@@ -110,7 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v){
                 choseFile=name;
                 System.out.println(choseFile);
-
+                Intent intent = new Intent(MainActivity.this, play.class);
+                intent.putExtra("SONG_NAME",choseFile);
+                startActivity(intent);
             }
         });
         layout.addView(newbtn);
@@ -159,5 +145,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("Permission denied");
             }
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        //meow meow meow meow meow
     }
 }
