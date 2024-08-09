@@ -14,7 +14,6 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -85,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+    public void switchToDownload(View view) {
+        System.out.println("download");
+        Intent intent= new Intent(MainActivity.this,downloadScreen.class);
+        startActivity(intent);
+    }
 
     public void addButton(String name){
         LinearLayout layout = (LinearLayout) findViewById(R.id.main);
@@ -151,4 +155,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         //meow meow meow meow meow
     }
+
 }

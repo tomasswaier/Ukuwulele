@@ -1,17 +1,21 @@
 [versions]
 agp = "8.4.0"
+android-youtube-extractor = "v2.1.0"
+js-evaluator-for-android = "v6.0.0"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+androidx-junit = "1.1.5"
+espresso-core = "3.5.1"
 appcompat = "1.6.1"
 material = "1.12.0"
 activity = "1.9.0"
 constraintlayout = "2.1.4"
 
 [libraries]
+android-youtube-extractor = { module = "com.github.HaarigerHarald:android-youtubeExtractor", version.ref = "android-youtube-extractor" }
+js-evaluator-for-android = { module = "com.github.evgenyneu:js-evaluator-for-android", version.ref = "js-evaluator-for-android" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -19,4 +23,3 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

@@ -1,11 +1,13 @@
 package com.example.ukuwulele;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -22,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,8 +37,13 @@ public class play extends AppCompatActivity implements View.OnClickListener {
     boolean playing;
     String filename;
     TextView textView;
+    TextView textViewCurrent;
+    TextView textViewMax;
     String savedTimes = "times.txt";
     HashMap<String, String> timeStamps = new HashMap<>(); // Initialize here
+    Handler handler = new Handler();
+    Runnable updateSeekBar;
+    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,8 @@ public class play extends AppCompatActivity implements View.OnClickListener {
         Intent intent = getIntent();
         filename = intent.getStringExtra("SONG_NAME");
         textView = (TextView) findViewById(R.id.txtName);
+        textViewCurrent = (TextView) findViewById(R.id.textViewCurrent);
+        textViewMax = (TextView) findViewById(R.id.textViewMax);
         textView.setText(filename);
         playing = false;
 
@@ -57,17 +68,47 @@ public class play extends AppCompatActivity implements View.OnClickListener {
         seekBar = findViewById(R.id.seekBar);
 
         timeStamps = new HashMap<>();
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && player != null) {
+                    player.seekTo(progress);
+                }
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Optional: Add actions when touch starts
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Optional: Add actions when touch stops
+            }
+        });
+        updateSeekBar = new Runnable() {
+            @Override
+            public void run() {
+                if (player != null && playing) {
+                    int currentPosition=player.getCurrentPosition();
+                    seekBar.setProgress(currentPosition);
+                    textViewCurrent.setText(formatter.format(new Date(currentPosition)));
+                    handler.postDelayed(this, 1000); // Update every 1000ms (1 second)
+                }
+            }
+        };
     }
 
     @Override
     public void onClick(View v) {
         if (!playing) {
+            button.setText("Pause");
             if (player == null) {
                 loadAudioFile();
             }
             startPlayer();
         } else {
+            button.setText("Start");
             stopPlayer();
         }
     }
@@ -79,14 +120,17 @@ public class play extends AppCompatActivity implements View.OnClickListener {
     }
 
     boolean firstPlay = true;
-
     private void startPlayer() {
         if (firstPlay) {
             player.seekTo(readTime());
             firstPlay = false;
+            int currentTime=player.getDuration();
+            seekBar.setMax(currentTime);
+            textViewMax.setText(formatter.format(new Date(currentTime)));
         }
         player.start();
         playing = true;
+        handler.post(updateSeekBar);
     }
 
     private void stopPlayer() {
@@ -170,5 +214,13 @@ public class play extends AppCompatActivity implements View.OnClickListener {
         } catch (Exception ignored) {
 
         }
+    }
+
+    public void playerBackwards(View view) {
+        player.seekTo(player.getCurrentPosition()-10000);
+    }
+
+    public void playerForward(View view) {
+        player.seekTo(player.getCurrentPosition()+10000);
     }
 }
